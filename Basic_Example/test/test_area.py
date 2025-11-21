@@ -3,7 +3,7 @@ from src.area import calculate_area_square
 
 #Function Test
 def test_calculate_area_square():
-    assert calculate_area_square(2) == 5
+    assert calculate_area_square(2) == 4
     assert calculate_area_square(2.5) == 6.25
 
 #Error Tests
