@@ -1,4 +1,4 @@
-name: Bank Security Audit
+name: Level 2
 
 on: [pull_request]
 

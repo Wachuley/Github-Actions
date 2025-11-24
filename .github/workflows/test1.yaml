@@ -1,4 +1,4 @@
-name: The Broken Build Challenge
+name: Level 1
 
 on: [pull_request]
 
