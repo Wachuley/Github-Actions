@@ -1,0 +1,52 @@
+name: Bank Security Audit
+
+on: [pull_request]
+
+jobs:
+  check-style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install Linter
+        run: pip install flake8
+      - name: Run Linter
+        # F401: imports no usados
+        # W292: falta nueva línea al final
+        # E302: falta espacio entre funciones
+        run: flake8 . --count --select=E9,F63,F7,F82,F401,W292,E302 --show-source --statistics
+
+  run-security-tests:
+    needs: check-style
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install Pytest
+        run: pip install pytest
+      - name: Run Security Audit
+        # Modo Silencioso: No muestra el error exacto, solo qué prueba falló
+        run: pytest --tb=no -q --show-capture=no
+
+  congratulate:
+    needs: run-security-tests
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Approve Security Module
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🔒 **¡Sistema Seguro!** \n\n✅ Código limpio y sin vulnerabilidades.\n✅ El módulo de autenticación ha pasado la auditoría.\n🚀 **Desplegando al Core Bancario...**'
+            })
